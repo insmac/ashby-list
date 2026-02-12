@@ -1,0 +1,11 @@
+[project]
+name = "ashby-job-scraper"
+version = "0.1.0"
+description = "Scrapes Google for Ashby job postings and stores them in Neon PostgreSQL"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "playwright>=1.40.0",
+    "psycopg2-binary>=2.9.0",
+    "python-dotenv>=1.0.0",
+]
