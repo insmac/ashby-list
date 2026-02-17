@@ -1,0 +1,13 @@
+Add the table column with search item descriptions.
+
+---
+
+Make sure this is also added to the database into the `description` column.
+
+---
+
+run that ALTER TABLE migration on the database
+
+---
+
+commit this
