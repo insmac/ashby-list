@@ -48,7 +48,7 @@ CREATE TABLE IF NOT EXISTS jobs (
     url_hash VARCHAR(64) UNIQUE NOT NULL,
     title TEXT,
     company TEXT,
-    snippet TEXT,
+    description TEXT,
     search_rank INTEGER,
     discovered_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     last_seen_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -326,7 +326,7 @@ async def extract_search_results(page) -> list[dict]:
                 'url': real_url,
                 'title': title.strip() if title else '',
                 'company': company,
-                'snippet': description.strip() if description else '',
+                'description': description.strip() if description else '',
                 'search_rank': len(results) + 1,  # 1-based position
             })
             
@@ -361,23 +361,23 @@ def save_jobs(jobs: list[dict]) -> tuple[int, int]:
                         cur.execute("""
                             UPDATE jobs SET
                                 title = %s,
-                                snippet = %s,
+                                description = %s,
                                 search_rank = %s,
                                 last_seen_at = CURRENT_TIMESTAMP,
                                 is_active = TRUE
                             WHERE url_hash = %s
-                        """, (job['title'], job['snippet'], job['search_rank'], url_hash))
+                        """, (job['title'], job['description'], job['search_rank'], url_hash))
                     else:
                         # Insert new
                         cur.execute("""
-                            INSERT INTO jobs (url, url_hash, title, company, snippet, search_rank)
+                            INSERT INTO jobs (url, url_hash, title, company, description, search_rank)
                             VALUES (%s, %s, %s, %s, %s, %s)
                         """, (
                             job['url'],
                             url_hash,
                             job['title'],
                             job['company'],
-                            job['snippet'],
+                            job['description'],
                             job['search_rank'],
                         ))
                         new_count += 1
@@ -396,14 +396,14 @@ def get_recent_jobs(days: int = 7) -> list[dict]:
     with get_db_connection() as conn:
         with conn.cursor() as cur:
             cur.execute("""
-                SELECT url, title, company, snippet, discovered_at
+                SELECT url, title, company, description, discovered_at
                 FROM jobs
                 WHERE discovered_at > NOW() - INTERVAL '%s days'
                   AND is_active = TRUE
                 ORDER BY discovered_at DESC
             """, (days,))
             
-            columns = ['url', 'title', 'company', 'snippet', 'discovered_at']
+            columns = ['url', 'title', 'company', 'description', 'discovered_at']
             return [dict(zip(columns, row)) for row in cur.fetchall()]
 
 
@@ -445,6 +445,8 @@ async def main():
         for job in recent:
             print(f"\n📌 {job['title']}")
             print(f"   🏢 {job['company']}")
+            if job.get('description'):
+                print(f"   📝 {job['description']}")
             print(f"   🔗 {job['url']}")
     
     return new_count
