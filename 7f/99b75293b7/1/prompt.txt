@@ -1,0 +1,5 @@
+Remove all found URLs that don't start with the domains we're using in the search query statement in that site: operator.
+
+---
+
+sweet, now commit and push

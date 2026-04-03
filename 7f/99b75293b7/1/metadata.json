@@ -1,0 +1,31 @@
+{
+  "cli_version": "0.4.5",
+  "checkpoint_id": "7f99b75293b7",
+  "session_id": "c89ce9d2-ad2d-4e7e-94e8-77dbbd5e1a86",
+  "strategy": "manual-commit",
+  "created_at": "2026-04-03T08:04:28.398672Z",
+  "branch": "main",
+  "checkpoints_count": 1,
+  "files_touched": [
+    "job_scraper.py"
+  ],
+  "agent": "Claude Code",
+  "turn_id": "b1dd0e43176a",
+  "token_usage": {
+    "input_tokens": 11,
+    "cache_creation_tokens": 14661,
+    "cache_read_tokens": 146879,
+    "output_tokens": 2869,
+    "api_call_count": 7
+  },
+  "initial_attribution": {
+    "calculated_at": "2026-04-03T08:04:28.360251Z",
+    "agent_lines": 27,
+    "human_added": 0,
+    "human_modified": 0,
+    "human_removed": 0,
+    "total_committed": 27,
+    "agent_percentage": 100
+  },
+  "transcript_path": ".claude/projects/-Users-maciejbodek-Work-ashby-list/c89ce9d2-ad2d-4e7e-94e8-77dbbd5e1a86.jsonl"
+}
