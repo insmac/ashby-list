@@ -1,0 +1,15 @@
+Add `- greenhouse.io
+- jobs.lever.co
+- jobs.smartrecruiters.com
+- wd1.myworkdayjobs.com
+- jobs.bamboohr.com
+- jobs.jobvite.com
+- careers.icims.com
+- apply.jazz.co
+- careers.workable.com` 
+
+to the list of searched sites in the default search query
+
+---
+
+weirdly, currently I'm only seeing jobs from ashbyhq.com added to the database, even though the search query adds multiple domains and there exist search results
