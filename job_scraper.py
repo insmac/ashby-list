@@ -37,9 +37,31 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Configuration
-DEFAULT_SEARCH_QUERY = 'site:jobs.ashbyhq.com ("front-end" OR "frontend" OR "fullstack" OR "product") remote'
+DEFAULT_SEARCH_QUERY = '(site:jobs.ashbyhq.com OR site:greenhouse.io OR site:jobs.lever.co OR site:jobs.smartrecruiters.com OR site:wd1.myworkdayjobs.com OR site:jobs.bamboohr.com OR site:jobs.jobvite.com OR site:careers.icims.com OR site:apply.jazz.co OR site:careers.workable.com) ("front-end" OR "frontend" OR "fullstack" OR "product") remote'
 SEARCH_QUERY = os.getenv('SEARCH_QUERY', DEFAULT_SEARCH_QUERY)
 MAX_PAGES = 10  # Max search result pages to scrape
+
+JOB_DOMAINS = (
+    'jobs.ashbyhq.com',
+    'greenhouse.io',
+    'jobs.lever.co',
+    'jobs.smartrecruiters.com',
+    'wd1.myworkdayjobs.com',
+    'jobs.bamboohr.com',
+    'jobs.jobvite.com',
+    'careers.icims.com',
+    'apply.jazz.co',
+    'careers.workable.com',
+)
+
+
+def is_valid_job_url(url: str) -> bool:
+    """Return True only if url's hostname matches one of the allowed job board domains."""
+    try:
+        netloc = urlparse(url).netloc.lower()
+        return any(netloc == domain or netloc.endswith('.' + domain) for domain in JOB_DOMAINS)
+    except Exception:
+        return False
 
 DB_SCHEMA = """
 CREATE TABLE IF NOT EXISTS jobs (
@@ -268,8 +290,8 @@ async def extract_search_results(page) -> list[dict]:
             if not href:
                 continue
             
-            # Check if URL contains ashbyhq (either direct or in Google redirect)
-            if 'jobs.ashbyhq.com' not in href:
+            # Check if URL belongs to one of the allowed job board domains
+            if not is_valid_job_url(href):
                 continue
             
             logger.info(f"Raw href found: {href[:100]}...")
@@ -418,13 +440,13 @@ async def main():
     logger.info(f"🔍 Searching: {SEARCH_QUERY}")
     jobs = await search_google_playwright(SEARCH_QUERY)
     
-    # Deduplicate by URL and filter valid Ashby URLs only
+    # Deduplicate by URL and filter valid job board URLs only
     seen = set()
     unique_jobs = []
     rank = 0
     for job in jobs:
         url = job['url']
-        if url not in seen and url.startswith('https://jobs.ashbyhq.com'):
+        if url not in seen and is_valid_job_url(url):
             seen.add(url)
             rank += 1
             job['search_rank'] = rank  # Re-assign rank after filtering
